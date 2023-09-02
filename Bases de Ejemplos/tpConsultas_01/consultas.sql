@@ -4,8 +4,14 @@ Go
 Select Apellidos, Nombres, FechaNacimiento From Usuarios
 
 -- 2) Apellido, nombres y edad de todos los usuarios
-Select Apellidos, Nombres, Datediff(Year, FechaNacimiento, Getdate())
-As Edad From Usuarios
+Select U.Apellidos, U.Nombres, U.FechaNacimiento,
+Year(Getdate()) - Year(U.FechaNacimiento) As EdadMargenError,
+Case
+    When Month(Getdate()) > Month(U.FechaNacimiento) Then Year(Getdate()) - Year(U.FechaNacimiento) -- ya cumplió
+    When Month(Getdate()) = Month(U.FechaNacimiento) And Day(Getdate()) >= Day(U.FechaNacimiento) Then Year(Getdate()) - Year(U.FechaNacimiento)
+    Else Year(Getdate()) - Year(U.FechaNacimiento) - 1
+    End As Edad
+From Usuarios U
 
 -- 3) Apellido y nombres de aquellos colaboradores cuyo género no sea masculino (letra 'M').
 Select Apellidos, Nombres From Usuarios
